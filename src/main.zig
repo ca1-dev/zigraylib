@@ -62,9 +62,9 @@ fn ray_main() !void {
             // pay attention to the Z in `allocPrintZ` that is a convention
             // for functions that return zero terminated strings
             const seconds: u32 = @intFromFloat(ray.GetTime());
-            const dynamic = try std.fmt.allocPrintZ(allocator, "running since {d} seconds", .{seconds});
+            const dynamic = try std.fmt.allocPrint(allocator, "running since {d} seconds", .{seconds});
             defer allocator.free(dynamic);
-            ray.DrawText(dynamic, 300, 250, 20, ray.WHITE);
+            ray.DrawText(dynamic.ptr, 300, 250, 20, ray.WHITE);
 
             _ = ray.GuiSliderBar(rec, "StartAngle", null, &value, -450, 450);
 
@@ -81,19 +81,21 @@ fn old_main() !void {
     // stdout is for the actual output of your application, for example if you
     // are implementing gzip, then only the compressed bytes should be sent to
     // stdout, not any debugging messages.
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+    var buf: [1024]u8 = undefined;
+    const stdout_file = std.fs.File.stdout();
+    var bw = stdout_file.writer(&buf);
+    var stdout = &bw.interface;
 
     try stdout.print("Run `zig build test` to run the tests.\n", .{});
 
-    try bw.flush(); // don't forget to flush!
+    try stdout.flush(); // don't forget to flush!
 }
 
 fn hints() !void {
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+    var buf: [1024]u8 = undefined;
+    const stdout_file = std.fs.File.stdout();
+    var bw = stdout_file.writer(&buf);
+    var stdout = &bw.interface;
 
     try stdout.print("\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n", .{});
     try stdout.print("Here are some hints:\n", .{});
@@ -103,12 +105,12 @@ fn hints() !void {
     try stdout.print("Run `zig build -Draylib-optimize=ReleaseFast` for a debug build of your application, that uses a fast release of raylib (if you are only debugging your code)\n", .{});
     try stdout.print("\nDon't forget to update your `build.zig.zon`!\n", .{});
 
-    try bw.flush(); // don't forget to flush!
+    try stdout.flush(); // don't forget to flush!
 }
 
 test "simple test" {
-    var list = std.ArrayList(i32).init(std.testing.allocator);
-    defer list.deinit(); // try commenting this out and see if zig detects the memory leak!
-    try list.append(42);
+    var list = try std.ArrayList(i32).initCapacity(std.testing.allocator, 0);
+    defer list.deinit(std.testing.allocator); // try commenting this out and see if zig detects the memory leak!
+    try list.append(std.testing.allocator, 42);
     try std.testing.expectEqual(@as(i32, 42), list.pop());
 }

@@ -2,11 +2,11 @@
     // TODO rename this to your project name
     .name = .zigraylib,
     .version = "0.0.1",
-    .minimum_zig_version = "0.14.0",
+    .minimum_zig_version = "0.15.1",
     .dependencies = .{
         .raylib = .{
-            .url = "git+https://github.com/raysan5/raylib#bbeade636cd8c90e18b7e9e841c20b5f8bd15d94",
-            .hash = "raylib-5.5.0-whq8uGZGzQDi3_L7tJzgEINoZN-HwmOs0zkkc2g7ysIZ",
+            .url = "git+https://github.com/raysan5/raylib#8ada37d9671682f420a2be1f1afd4b06173b81ad",
+            .hash = "raylib-5.6.0-dev-whq8uCg2ywTzCiX3VEP9RuCMXR6_VnDBmkj8GjL_p5QN",
         },
         .raygui = .{
             .url = "git+https://github.com/raysan5/raygui#9a95871701a5fc63bea35eab73fef6414e048b73",
