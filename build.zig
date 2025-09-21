@@ -49,7 +49,7 @@ pub fn build(b: *std.Build) void {
     const raylib_artifact = raylib_dep.artifact("raylib");
 
     const raylib = @import("raylib");
-    raylib.addRaygui(b, raylib_artifact, raygui_dep);
+    raylib.addRaygui(b, raylib_artifact, raygui_dep, .{});
     exe.linkLibrary(raylib_artifact);
 
     // This declares intent for the executable to be installed into the
